@@ -83,24 +83,27 @@ export const TipsGuide: React.FC = () => {
               Guaranteed First-Shot Hit: The Distance Formula
             </h4>
             <p>
-              In Wardogs, ballistic trajectory has zero random spread over distance when the exact range
-              is dialed. Calculating the Euclidean distance gives an immediate direct hit on your first shot:
+              In Wardogs, ballistic trajectory has zero random spread when the exact range
+              is dialed. Each map coordinate unit represents <strong>100 meters</strong>:
             </p>
-            <div className="p-2.5 bg-slate-900/90 rounded border border-slate-800 font-mono text-center text-emerald-300">
-              Distance (d) = √[(X₂ - X₁)² + (Y₂ - Y₁)²]
+            <div className="p-2.5 bg-slate-900/90 rounded border border-slate-800 font-mono text-center text-emerald-300 text-xs">
+              Distance (meters) = √[(X₂ - X₁)² + (Y₂ - Y₁)²] × 100
             </div>
+            <p className="text-[11px] text-slate-400">
+              💡 <em>SwoleBenji Tip:</em> If the formula gives <strong>4.12</strong> map units, the target is <strong>412m</strong>. If it gives <strong>5.82</strong>, it is <strong>582m</strong> away.
+            </p>
             <ol className="list-decimal list-inside space-y-1.5 text-slate-300">
               <li>
-                <strong className="text-white">Pin your coordinates:</strong> Open your in-game map, hover over your player icon, and note your position coordinates <code className="text-emerald-400 bg-slate-900 px-1 py-0.5 rounded">(X₁, Y₁)</code>.
+                <strong className="text-white">Pin your coordinates:</strong> Open your in-game map, right-click on your mortar position, and select <em>Mark coordinates</em>. Press <code className="text-emerald-400 bg-slate-900 px-1 py-0.5 rounded">Ctrl+A</code> then <code className="text-emerald-400 bg-slate-900 px-1 py-0.5 rounded">Ctrl+C</code> in chat.
               </li>
               <li>
-                <strong className="text-white">Pin enemy target:</strong> Locate the enemy position, defensive fort, or vehicle, and note their map coordinates <code className="text-rose-400 bg-slate-900 px-1 py-0.5 rounded">(X₂, Y₂)</code>.
+                <strong className="text-white">Pin enemy target:</strong> Locate the enemy position, defensive fort, or vehicle, right click to mark coordinates and copy.
               </li>
               <li>
-                <strong className="text-white">Input into this calculator:</strong> Type the numbers above. You will immediately get the exact distance in meters and compass bearing.
+                <strong className="text-white">Paste or enter coords:</strong> Paste directly into the quick paste bar or type the numbers above.
               </li>
               <li>
-                <strong className="text-white">Dial range in mortar:</strong> Turn your mortar to the compass bearing and adjust the weapon's distance dial to match the calculated meters. Fire for a direct hit!
+                <strong className="text-white">Dial range in mortar:</strong> Turn your mortar to the compass bearing and adjust the weapon's distance dial (RNG) to match the calculated meters. Fire for a guaranteed first-shot hit!
               </li>
             </ol>
           </div>

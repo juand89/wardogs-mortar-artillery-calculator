@@ -11,9 +11,9 @@ import { Crosshair, Radio, Shield } from 'lucide-react';
 const STORAGE_KEY = 'wardogs_mortar_history_v1';
 
 export const App: React.FC = () => {
-  // Initial default coords for instant interactive preview
-  const [player, setPlayer] = useState<Coordinates>({ x: 1200, y: 850 });
-  const [target, setTarget] = useState<Coordinates>({ x: 1500, y: 1250 });
+  // Initial default coords from Wardogs map
+  const [player, setPlayer] = useState<Coordinates>({ x: 99.05, y: 108.54 });
+  const [target, setTarget] = useState<Coordinates>({ x: 98.72, y: 102.73 });
   const [history, setHistory] = useState<CalculationHistoryItem[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);

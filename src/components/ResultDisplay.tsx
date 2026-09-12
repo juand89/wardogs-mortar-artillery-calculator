@@ -22,7 +22,7 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ solution }) => {
     );
   }
 
-  const { distance, roundedDistance, bearing, cardinal, deltaX, deltaY, weapon } = solution;
+  const { distance, roundedDistance, gridUnits, bearing, cardinal, deltaX, deltaY, weapon } = solution;
 
   const handleCopy = () => {
     const text = `Wardogs Firing Solution: Range ${roundedDistance}m | Bearing ${bearing}° (${cardinal}) | Weapon: ${weapon.label}`;
@@ -88,8 +88,9 @@ export const ResultDisplay: React.FC<ResultDisplayProps> = ({ solution }) => {
             </span>
             <span className="text-lg font-bold text-slate-400">m</span>
           </div>
-          <div className="text-xs text-slate-500 font-mono mt-1">
-            Exact: {distance.toFixed(1)} m
+          <div className="text-xs text-slate-500 font-mono mt-1 flex items-center justify-between">
+            <span>Exact: {distance.toFixed(1)} m</span>
+            <span className="text-slate-400">({gridUnits} map units × 100)</span>
           </div>
         </div>
 

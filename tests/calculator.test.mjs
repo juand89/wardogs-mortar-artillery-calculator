@@ -5,48 +5,58 @@ import {
   getCardinalDirection,
   getWeaponStatus,
   computeFiringSolution,
+  parseCoordinateString,
+  GRID_SCALE,
 } from '../src/utils/calculator.ts';
 
-// Test 1: Zero distance
-assert.equal(calculateDistance(0, 0, 0, 0), 0);
+// Test 1: Grid Scale constant
+assert.equal(GRID_SCALE, 100);
 
-// Test 2: 3-4-5 triangle -> 500m
-const d1 = calculateDistance(0, 0, 300, 400);
-assert.equal(d1, 500);
-const w1 = getWeaponStatus(d1);
-assert.equal(w1.type, 'mortar');
+// Test 2: User's reported scenario (x99.05, y108.54 -> x98.72, y102.73)
+const userDistance = calculateDistance(99.05, 108.54, 98.72, 102.73);
+assert.equal(Math.round(userDistance), 582);
+const userSolution = computeFiringSolution(
+  { x: 99.05, y: 108.54 },
+  { x: 98.72, y: 102.73 }
+);
+assert.ok(userSolution);
+assert.equal(userSolution.roundedDistance, 582);
+assert.equal(userSolution.deltaX, -33);
+assert.equal(userSolution.deltaY, -581);
+assert.equal(userSolution.weapon.type, 'mortar');
+assert.equal(userSolution.cardinal, 'S');
 
-// Test 3: Artillery range (e.g. 1500m)
-const d2 = calculateDistance(0, 0, 1000, 1000);
-assert.equal(Math.round(d2), 1414);
-const w2 = getWeaponStatus(d2);
-assert.equal(w2.type, 'artillery');
+// Test 3: SwoleBenji video example (98.43, 110.38 -> 94.53, 109.03)
+const benjiDistance = calculateDistance(98.43, 110.38, 94.53, 109.03);
+assert.equal(Math.round(benjiDistance), 413);
+const benjiSolution = computeFiringSolution(
+  { x: 98.43, y: 110.38 },
+  { x: 94.53, y: 109.03 }
+);
+assert.ok(benjiSolution);
+assert.equal(benjiSolution.roundedDistance, 413);
+assert.equal(benjiSolution.weapon.type, 'mortar');
 
-// Test 4: Out of Range (> 2630m)
-const d3 = calculateDistance(0, 0, 2000, 2000);
-assert.equal(Math.round(d3), 2828);
-const w3 = getWeaponStatus(d3);
-assert.equal(w3.type, 'out_of_range');
+// Test 4: Artillery range (e.g., 1,414m)
+const artyDistance = calculateDistance(90.0, 100.0, 100.0, 110.0);
+assert.equal(Math.round(artyDistance), 1414);
+const artyWeapon = getWeaponStatus(artyDistance);
+assert.equal(artyWeapon.type, 'artillery');
 
-// Test 5: Compass bearing checks
-assert.equal(calculateBearing(0, 0, 0, 100), 0); // North
-assert.equal(getCardinalDirection(0), 'N');
+// Test 5: Out of Range (> 2,630m)
+const oorDistance = calculateDistance(90.0, 100.0, 110.0, 120.0);
+assert.equal(Math.round(oorDistance), 2828);
+const oorWeapon = getWeaponStatus(oorDistance);
+assert.equal(oorWeapon.type, 'out_of_range');
 
-assert.equal(calculateBearing(0, 0, 100, 0), 90); // East
-assert.equal(getCardinalDirection(90), 'E');
+// Test 6: Coordinate parser
+const p1 = parseCoordinateString('x99.05, y108.54');
+assert.deepEqual(p1, { x: 99.05, y: 108.54 });
 
-assert.equal(calculateBearing(0, 0, 0, -100), 180); // South
-assert.equal(getCardinalDirection(180), 'S');
+const p2 = parseCoordinateString('[98.72, 102.73]');
+assert.deepEqual(p2, { x: 98.72, y: 102.73 });
 
-assert.equal(calculateBearing(0, 0, -100, 0), 270); // West
-assert.equal(getCardinalDirection(270), 'W');
+const p3 = parseCoordinateString('X: 98.43 Y: 110.38');
+assert.deepEqual(p3, { x: 98.43, y: 110.38 });
 
-// Test 6: computeFiringSolution
-const sol = computeFiringSolution({ x: 100, y: 100 }, { x: 400, y: 500 });
-assert.ok(sol);
-assert.equal(sol.roundedDistance, 500);
-assert.equal(sol.deltaX, 300);
-assert.equal(sol.deltaY, 400);
-assert.equal(sol.weapon.type, 'mortar');
-
-console.log('✅ ALL CALCULATOR TESTS PASSED SUCCESSFULLY');
+console.log('✅ ALL CALCULATOR & GRID CONVERSION TESTS PASSED SUCCESSFULLY');

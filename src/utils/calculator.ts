@@ -2,6 +2,7 @@ import type { Coordinates, FiringSolution, WeaponStatus } from '../types/index.t
 
 export const MORTAR_MAX_RANGE = 700;
 export const ARTILLERY_MAX_RANGE = 2630;
+export const GRID_SCALE = 100; // In Wardogs, 1 coordinate unit on map = 100 meters
 
 const CARDINALS = [
   'N', 'NNE', 'NE', 'ENE',
@@ -20,11 +21,12 @@ export function getCardinalDirection(degrees: number): string {
 }
 
 /**
- * Calculate Euclidean distance in meters: sqrt((x2-x1)^2 + (y2-y1)^2)
+ * Calculate Euclidean distance in meters.
+ * In Wardogs: distance_meters = sqrt((x2 - x1)^2 + (y2 - y1)^2) * 100
  */
 export function calculateDistance(x1: number, y1: number, x2: number, y2: number): number {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
+  const dx = (x2 - x1) * GRID_SCALE;
+  const dy = (y2 - y1) * GRID_SCALE;
   return Math.sqrt(dx * dx + dy * dy);
 }
 
@@ -77,6 +79,23 @@ export function getWeaponStatus(distance: number): WeaponStatus {
 }
 
 /**
+ * Parse coordinates string copied directly from in-game chat or user input
+ * e.g. "x99.05, y108.54", "99.05, 108.54", "X: 99.05 Y: 108.54"
+ */
+export function parseCoordinateString(input: string): { x: number; y: number } | null {
+  if (!input || typeof input !== 'string') return null;
+  const matches = input.match(/-?\d+(?:\.\d+)?/g);
+  if (matches && matches.length >= 2) {
+    const x = parseFloat(matches[0]);
+    const y = parseFloat(matches[1]);
+    if (!Number.isNaN(x) && !Number.isNaN(y)) {
+      return { x, y };
+    }
+  }
+  return null;
+}
+
+/**
  * Compute comprehensive firing solution
  */
 export function computeFiringSolution(
@@ -101,9 +120,11 @@ export function computeFiringSolution(
   const tx = Number(target.x);
   const ty = Number(target.y);
 
-  const deltaX = tx - px;
-  const deltaY = ty - py;
+  // In meters
+  const deltaX = Math.round((tx - px) * GRID_SCALE * 10) / 10;
+  const deltaY = Math.round((ty - py) * GRID_SCALE * 10) / 10;
   const distance = calculateDistance(px, py, tx, ty);
+  const gridUnits = Math.round(Math.sqrt((tx - px) ** 2 + (ty - py) ** 2) * 100) / 100;
   const bearing = calculateBearing(px, py, tx, ty);
   const cardinal = getCardinalDirection(bearing);
   const weapon = getWeaponStatus(distance);
@@ -111,6 +132,7 @@ export function computeFiringSolution(
   return {
     distance: Math.round(distance * 10) / 10,
     roundedDistance: Math.round(distance),
+    gridUnits,
     deltaX,
     deltaY,
     bearing,

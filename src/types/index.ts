@@ -16,6 +16,7 @@ export interface WeaponStatus {
 export interface FiringSolution {
   distance: number;
   roundedDistance: number;
+  gridUnits: number;
   deltaX: number;
   deltaY: number;
   bearing: number;
